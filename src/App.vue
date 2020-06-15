@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
@@ -16,5 +15,5 @@ export default {
 </script>
 
 <style>
-@import url("./assets/css/base.css");
+@import url("assets/css/base.css");
 </style>
