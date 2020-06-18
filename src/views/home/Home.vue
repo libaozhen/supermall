@@ -4,22 +4,15 @@
     <NavBar class="home_nav">
       <div slot="center">购物街</div>
     </NavBar>
-    <swiper class="swiper" :options="swiperOption">
-      <swiper-slide v-for="(item,index) in banners">
-        <a :href="item.link"><img :src="item.image"/></a>
-      </swiper-slide>
-      <div class="swiper-pagination" slot="pagination"></div>
-    </swiper>
+    <HomeSwiper :banners="banners"></HomeSwiper>
  </div>
 </template>
 
 <script>
   // 顶部导航栏组件
   import NavBar from 'components/common/navbar/NavBar.vue';
-
-  // 局部引用swiper组件
-  import 'swiper/css/swiper.css';
-  import { Swiper,SwiperSlide } from 'vue-awesome-swiper';
+  // 轮播图组件
+  import HomeSwiper from './childcomponents/HomeSwiper.vue';
 
   import {getSwiperData} from 'network/home.js';
 
@@ -28,23 +21,12 @@
     data(){
       return {
         banners:[],
-        recommends:[],
-        swiperOption: {
-          autoplay:true,
-          speed: 300,
-          loop: true,//开启循环模式
-          initialSlide:1,//默认显示第一张图
-          pagination: {
-            el:".swiper-pagination", //分页器作用对象
-            clickable: true //分页器小圆点是否可点击
-          }
-        }
+        recommends:[]
       }
     },
     components:{
       NavBar,
-      Swiper,
-      SwiperSlide
+      HomeSwiper
     },
     created(){
       getSwiperData().then(res=>{
@@ -61,7 +43,6 @@
     background-color:var(--color-tint);
     color:#fff;
   }
-
   .swiper-slide img{
     width:100%;
   }
