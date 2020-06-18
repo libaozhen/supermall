@@ -3,8 +3,17 @@
 </template>
 
 <script>
+  import request  from '@/network/request.js'
   export default {
-    name:"Home"
+    name:"Home",
+    created(){
+      // console.log("created");
+      request({
+        url:"getSwiperData"
+      }).then(res=>{
+        console.log(res);
+      });
+    }
   }
 </script>
 
