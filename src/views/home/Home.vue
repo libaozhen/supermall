@@ -5,6 +5,7 @@
       <div slot="center">购物街</div>
     </NavBar>
     <HomeSwiper :banners="banners"></HomeSwiper>
+    <RecommendView :recommends="recommends"></RecommendView>
  </div>
 </template>
 
@@ -13,6 +14,8 @@
   import NavBar from 'components/common/navbar/NavBar.vue';
   // 轮播图组件
   import HomeSwiper from './childcomponents/HomeSwiper.vue';
+  // 推荐组件
+  import RecommendView from './childcomponents/RecommendView.vue';
 
   import {getSwiperData} from 'network/home.js';
 
@@ -26,7 +29,8 @@
     },
     components:{
       NavBar,
-      HomeSwiper
+      HomeSwiper,
+      RecommendView
     },
     created(){
       getSwiperData().then(res=>{
@@ -42,8 +46,5 @@
   .home_nav {
     background-color:var(--color-tint);
     color:#fff;
-  }
-  .swiper-slide img{
-    width:100%;
   }
 </style>
