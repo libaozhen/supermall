@@ -44,14 +44,14 @@
     methods:{
       // 滚动方法
       scrollTo(x,y,time=300){
-        this.bscroll.scrollTo(x,y,time);
+        this.bscroll && this.bscroll.scrollTo(x,y,time);
       },
       // 结束本次上拉刷新，否则不进行下一次上拉刷新
       finishPullUp(){
-        this.bscroll.finishPullUp();
+        this.bscroll && this.bscroll.finishPullUp();
       },
       refresh(){
-        this.bscroll.refresh();
+        this.bscroll && this.bscroll.refresh();
       }
     }
   }

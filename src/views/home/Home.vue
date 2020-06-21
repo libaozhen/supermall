@@ -74,12 +74,12 @@
       this.getHomeGoods('new');
       // 获取精选商品
       this.getHomeGoods('sell');
-
+    },
+    mounted(){
       // 监听GoodsList组件发出的事件总线,
       this.$bus.$on('imageLoad',()=>{
-        this.$refs.scroll.refresh();
+        this.$refs.scroll && this.$refs.scroll.refresh();
       });
-
     },
     methods:{
       /**
