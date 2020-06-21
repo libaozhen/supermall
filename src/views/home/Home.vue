@@ -10,7 +10,7 @@
       <HomeSwiper :banners="banners"></HomeSwiper>
       <RecommendView :recommends="recommends"></RecommendView>
       <TabControl v-show="!isTabControlShow" class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
-      <GoodsList :goods="showGoods"></GoodsList>
+      <GoodsList :goods="showGoods" @imageLoad="imageLoad"></GoodsList>
     </Scroll>
     <!-- 回到顶部 -->
     <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
@@ -75,6 +75,11 @@
       // 获取精选商品
       this.getHomeGoods('sell');
 
+      // 监听GoodsList组件发出的事件总线,
+      this.$bus.$on('imageLoad',()=>{
+        this.$refs.scroll.refresh();
+      });
+
     },
     methods:{
       /**
@@ -118,6 +123,10 @@
           // 结束本次上拉刷新
           this.$refs.scroll.finishPullUp();
         },2000);
+      },
+      // GoodsList组件中每张图片加载完毕后的回调函数
+      imageLoad(){
+        this.$refs.scroll.refresh();
       },
       /**
        * 获取数据相关方法

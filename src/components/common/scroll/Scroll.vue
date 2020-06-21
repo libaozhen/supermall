@@ -49,6 +49,9 @@
       // 结束本次上拉刷新，否则不进行下一次上拉刷新
       finishPullUp(){
         this.bscroll.finishPullUp();
+      },
+      refresh(){
+        this.bscroll.refresh();
       }
     }
   }

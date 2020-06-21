@@ -1,7 +1,7 @@
 <template>
   <div class="goods_box">
     <div class="goods_item" v-for="(item,index) in goods" :key="index">
-       <img :src="item.show.img" alt="">
+       <img :src="item.show.img" alt="" @load="imageLoad">
        <div class="goods_info">
           <p>{{item.title}}</p>
           <span class="price">￥{{item.price}}</span><span class="collect">{{item.cfav}}</span>
@@ -19,6 +19,14 @@
         default(){
           return []
         }
+      }
+    },
+    methods:{
+      imageLoad(){
+        // 方式一
+        // this.$emit('imageLoad');
+        // 如果是多个子组件，不能直接发送事件到home，则可以利用事件总线方式传递
+        this.$bus.$emit('imageLoad');
       }
     }
   }
