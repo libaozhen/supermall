@@ -3,7 +3,7 @@ import axios from 'axios';
 const request = function(config){
 
   //let baseURL = "http://localhost/SDJZC/WechatApplet/Interface";
-  let baseURL = "http://123.207.32.32:8000";
+  let baseURL = "http://152.136.185.210:8000/api/n3";
 
   // 创建axios实例
   const instance = new axios.create({
@@ -38,11 +38,11 @@ const request = function(config){
 
 export default request;
 
-
+const newBaseUrl = "http://152.136.185.210:8000/api/n3";
 const url = "http://123.207.32.32:8000/home/multidata";
 const baseUrl = "http://localhost/SDJZC/WechatApplet/Interface";
 const url1 = baseUrl + "/getSwiperData";
-const url2 = "http://123.207.32.32:8000/home/data?type=pop&page=1";
-const url3 = "http://123.207.32.32:8000/home/data";
+const url2 = "http://152.136.185.210:8000/api/n3/home/data?type=pop&page=1";
+const url3 = "http://152.136.185.210:8000/api/n3/home/data";
 const url4 = baseUrl + "/getGoodsData?cid=23&pageindex=1&pagesize=2";
 const url5 = baseUrl + "/getGoodsData";
