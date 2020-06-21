@@ -4,20 +4,29 @@
     <NavBar class="home_nav">
       <div slot="center">购物街</div>
     </NavBar>
-    <HomeSwiper :banners="banners"></HomeSwiper>
-    <RecommendView :recommends="recommends"></RecommendView>
-    <TabControl class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
-    <GoodsList :goods="showGoods"></GoodsList>
+    <TabControl v-show="isTabControlShow" class="tab-control on-top" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
+    <!-- 滚动区域 -->
+    <Scroll class="scroll" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="handleScroll" @pullingUp="handlePullingUp">
+      <HomeSwiper :banners="banners"></HomeSwiper>
+      <RecommendView :recommends="recommends"></RecommendView>
+      <TabControl v-show="!isTabControlShow" class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
+      <GoodsList :goods="showGoods"></GoodsList>
+    </Scroll>
+    <!-- 回到顶部 -->
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
  </div>
 </template>
 
 <script>
   // 顶部导航栏组件
   import NavBar from 'components/common/navbar/NavBar.vue';
+  import Scroll from 'components/common/scroll/Scroll.vue';
+
   // tab页签组件
   import TabControl from 'components/content/tabcontrol/TabControl.vue';
   // 商品组件
-  import GoodsList from '../../components/content/goods/GoodsList.vue';
+  import GoodsList from 'components/content/goods/GoodsList.vue';
+  import BackTop from 'components/content/backtop/BackTop.vue'
 
   // 轮播图组件
   import HomeSwiper from './childcomponents/HomeSwiper.vue';
@@ -37,7 +46,9 @@
           'pop':{page:0,list:[]},
           'new':{page:0,list:[]},
           'sell':{page:0,list:[]}
-        }
+        },
+        isShowBackTop:false,
+        isTabControlShow:false
       }
     },
     computed:{
@@ -47,8 +58,10 @@
     },
     components:{
       NavBar,
+      Scroll,
       TabControl,
       GoodsList,
+      BackTop,
       HomeSwiper,
       RecommendView
     },
@@ -67,6 +80,7 @@
       /**
        * 事件相关方法
        * */
+      //tab页签点击事件
       tabClick(index){
         switch(index){
           case 0:
@@ -79,6 +93,31 @@
             this.goodsType = 'sell';
             break;
         }
+      },
+      // 返回顶部点击事件
+      backTopClick(){
+        // 调用滚动组件的scrollTo方法
+        this.$refs.scroll.scrollTo(0,0,500);
+      },
+      // Scroll组件滚动事件
+      handleScroll(position){
+        // console.log(position);
+        if(-position.y>388){
+          this.isTabControlShow = true;
+        }else{
+          this.isTabControlShow = false;
+        }
+        this.isShowBackTop = -position.y>1000
+      },
+      // 上拉刷新
+      handlePullingUp(){
+        console.log('上拉刷新');
+        this.getHomeGoods(this.goodsType);
+        this.$refs.scroll.bscroll.refresh();
+        setTimeout(()=>{
+          // 结束本次上拉刷新
+          this.$refs.scroll.finishPullUp();
+        },2000);
       },
       /**
        * 获取数据相关方法
@@ -94,7 +133,7 @@
       getHomeGoods(type){
         const page = this.goods[type].page +1;
         getHomeGoods(type,page).then(res=>{
-          console.log(res);
+          // console.log(res);
           this.goods[type].list.push(...res.data.list);
           this.goods[type].page = page;
         });
@@ -103,10 +142,12 @@
   }
 </script>
 
-<style>
+<style scoped>
   .home{
+    height: 100vh;
     padding-top: 44px;
     padding-bottom: 49px;
+    position: relative;
   }
   .home_nav {
     background-color:var(--color-tint);
@@ -121,6 +162,20 @@
   .tab-control{
     position: sticky;
     top:44px;
-
+  }
+  .scroll{
+    position: absolute;
+    left:0;
+    right: 0;
+    top:44px;
+    bottom:49px;
+    overflow: hidden;
+  }
+  .on-top{
+    position:fixed;
+    top:44px;
+    left:0px;
+    right:0px;
+    z-index: 9;
   }
 </style>

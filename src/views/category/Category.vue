@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" ref="scroll">
+  <div class="wrapper11">
     <ul class="content">
       <button @click="btnClick">按钮</button>
       <li>列表1</li>
@@ -116,14 +116,14 @@
       }
     },
     mounted(){
-      this.bs = new BScroll('.wrapper',{
-        probeType:3,
+      this.bs = new BScroll('.wrapper11',{
+        probeType:0,
         pullUpLoad:true
       });
       // 监听scroll事件，必须指定probeType为3
       this.bs.on('scroll',(position)=>{
-        // console.log(11);
-        // console.log(position);
+         // console.log(222);
+        console.log(position);
       });
 
        this.bs.on('pullingUp',()=>{
@@ -141,9 +141,10 @@
   }
 </script>
 
-<style scoped="true">
-  .wrapper{
+<style scoped>
+  .wrapper11{
     height: 150px;
     background-color: red;
+    overflow: hidden;
   }
 </style>

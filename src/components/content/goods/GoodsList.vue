@@ -1,6 +1,6 @@
 <template>
   <div class="goods_box">
-    <div class="goods_item" v-for="item in goods">
+    <div class="goods_item" v-for="(item,index) in goods" :key="index">
        <img :src="item.show.img" alt="">
        <div class="goods_info">
           <p>{{item.title}}</p>
