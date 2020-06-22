@@ -54,7 +54,7 @@
         this.bscroll && this.bscroll.finishPullUp();
       },
       refresh(){
-         console.log('=====');
+         // console.log('=====');
         this.bscroll && this.bscroll.refresh();
       }
     }

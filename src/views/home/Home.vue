@@ -34,6 +34,8 @@
   import RecommendView from './childcomponents/RecommendView.vue';
 
   import {getSwiperData,getHomeGoods} from 'network/home.js';
+  // 导入工具js文件
+  import {debounce} from 'common/utils.js'
 
   export default {
     name:"Home",
@@ -76,8 +78,8 @@
       this.getHomeGoods('sell');
     },
     mounted(){
-      //
-      const refresh = this.debounce(this.$refs.scroll.refresh,100);
+      //防抖函数
+      const refresh = debounce(this.$refs.scroll.refresh,100,false);
 
       // 监听GoodsList组件发出的事件总线,
       this.$bus.$on('imageLoad',()=>{
