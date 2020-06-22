@@ -32,16 +32,23 @@
         // 允许上拉刷新
         pullUpLoad:this.pullUpLoad
       });
-      // 监听滚动事件
-      this.bscroll.on('scroll',(position)=>{
-        this.$emit('scroll',position);
-      });
-      // 监听上拉刷新事件
-      this.bscroll.on('pullingUp',()=>{
-        this.$emit('pullingUp')
-      });
+
+      if(this.probeType===2||this.probeType===3){
+        // 监听滚动事件
+        this.bscroll.on('scroll',(position)=>{
+          this.$emit('scroll',position);
+        });
+      }
+
+      if(this.pullUpLoad){
+        // 监听上拉刷新事件
+        this.bscroll.on('pullingUp',()=>{
+          this.$emit('pullingUp')
+        });
+      }
     },
     destroyed(){
+      // console.log('Scroll.vue destroyed');
       this.bscroll && this.bscroll.destroy();
     },
     methods:{
@@ -56,6 +63,9 @@
       refresh(){
          // console.log('=====');
         this.bscroll && this.bscroll.refresh();
+      },
+      getScrollY(){
+        return this.bscroll?this.bscroll.y:0
       }
     }
   }

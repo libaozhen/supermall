@@ -4,12 +4,12 @@
     <NavBar class="home_nav">
       <div slot="center">购物街</div>
     </NavBar>
-    <TabControl v-show="isTabControlShow" class="tab-control on-top" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
+    <TabControl ref="tabcontrol_top" v-show="isTabControlShow" class="tab-control on-top" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
     <!-- 滚动区域 -->
-    <Scroll class="scroll" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="handleScroll" @pullingUp="handlePullingUp">
-      <HomeSwiper :banners="banners"></HomeSwiper>
+    <Scroll class="scroll" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="handleScroll" @pullingUp="loadMore">
+      <HomeSwiper :banners="banners" @swiperImageLoad="swiperImageLoad"></HomeSwiper>
       <RecommendView :recommends="recommends"></RecommendView>
-      <TabControl v-show="!isTabControlShow" class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
+      <TabControl ref="tabcontrol_content"  class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></TabControl>
       <GoodsList :goods="showGoods" @imageLoad="imageLoad"></GoodsList>
     </Scroll>
     <!-- 回到顶部 -->
@@ -50,7 +50,10 @@
           'sell':{page:0,list:[]}
         },
         isShowBackTop:false,
-        isTabControlShow:false
+        isTabControlShow:false,
+        // tabcontrol 的offsettop属性值
+        tabOffSetTop:0,
+        saveY:0
       }
     },
     computed:{
@@ -78,13 +81,25 @@
       this.getHomeGoods('sell');
     },
     mounted(){
+
       //防抖函数
       const refresh = debounce(this.$refs.scroll.refresh,100,false);
-
       // 监听GoodsList组件发出的事件总线,
       this.$bus.$on('imageLoad',()=>{
         refresh();
       });
+    },
+    activated(){
+      // console.log("activated");
+      this.$refs.scroll.scrollTo(0,this.saveY,0);
+      this.$refs.scroll.refresh();
+    },
+    deactivated(){
+      this.saveY = this.$refs.scroll.getScrollY();
+      console.log( this.saveY);
+    },
+    destroyed(){
+      console.log('Home组件销毁');
     },
     methods:{
       // 防抖函数
@@ -117,6 +132,11 @@
             this.goodsType = 'sell';
             break;
         }
+        // 同时修改掉两个组件的current_index,使两个组件的选中状态一致。
+        this.$refs.tabcontrol_top.current_index = index;
+        this.$refs.tabcontrol_content.current_index = index;
+        // 如果有吸顶效果后，点击页签，则显示从开始的第一张显示
+        this.$refs.scroll.scrollTo(0,-this.tabOffSetTop,0);
       },
       // 返回顶部点击事件
       backTopClick(){
@@ -125,27 +145,30 @@
       },
       // Scroll组件滚动事件
       handleScroll(position){
+        // 判断返回顶部是否显示
+        this.isShowBackTop = -position.y>1000;
         // console.log(position);
-        if(-position.y>388){
+        // 显示与隐藏顶部的tabcontrol
+        if(-position.y>this.tabOffSetTop){
           this.isTabControlShow = true;
         }else{
           this.isTabControlShow = false;
         }
-        this.isShowBackTop = -position.y>1000
       },
-      // 上拉刷新
-      handlePullingUp(){
-        console.log('上拉刷新');
+      // 上拉加载更多
+      loadMore(){
+        // console.log('上拉加载更多');
         this.getHomeGoods(this.goodsType);
-        this.$refs.scroll.bscroll.refresh();
-        setTimeout(()=>{
-          // 结束本次上拉刷新
-          this.$refs.scroll && this.$refs.scroll.finishPullUp();
-        },2000);
       },
       // GoodsList组件中每张图片加载完毕后的回调函数
       imageLoad(){
         this.$refs.scroll.refresh();
+      },
+      // 轮播图某张图片加载完事件
+      // 加载完毕后获取tabControl的offsetTop
+      swiperImageLoad(){
+        this.tabOffSetTop = this.$refs.tabcontrol_content.$el.offsetTop;
+        // console.log(this.tabOffSetTop);
       },
       /**
        * 获取数据相关方法
@@ -164,6 +187,13 @@
           // console.log(res);
           this.goods[type].list.push(...res.data.list);
           this.goods[type].page = page;
+
+          // 结束本次上拉刷新
+          // this.$refs.scroll.finishPullUp();
+          setTimeout(()=>{
+            // 结束本次上拉刷新
+            this.$refs.scroll && this.$refs.scroll.finishPullUp();
+          },2000);
         });
       }
     }

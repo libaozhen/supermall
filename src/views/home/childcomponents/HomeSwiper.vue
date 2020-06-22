@@ -1,7 +1,7 @@
 <template>
   <swiper class="swiper" :options="swiperOption">
     <swiper-slide v-for="(item,index) in banners">
-      <a :href="item.link"><img :src="item.image"/></a>
+      <a :href="item.link"><img :src="item.image" @load="swiperImageLoad"/></a>
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>
@@ -16,6 +16,8 @@
     name:"HomeSwiper",
     data(){
       return {
+        // 图片是否加载完毕
+        imageIsLoad:false,
         swiperOption: {
           autoplay:true,
           speed: 300,
@@ -40,6 +42,16 @@
     components:{
       Swiper,
       SwiperSlide
+    },
+    methods:{
+      swiperImageLoad(){
+        // 因为home.vue中要计算tabcontrol的offsetTop属性，只要一张图片加载完毕就可以获取到正确的
+        // 所以只发射一次事件就可以了
+        if(!this.imageIsLoad){
+          this.$emit('swiperImageLoad');
+          this.imageIsLoad = true;
+        }
+      }
     }
   }
 </script>
