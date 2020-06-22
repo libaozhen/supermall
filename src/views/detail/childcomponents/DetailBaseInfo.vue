@@ -88,12 +88,15 @@
   }
   .info_services .service_item{
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .info_services .service_item:nth-last-child(-n+1){
+  .info_services .service_item:nth-child(1){
+    text-align: left;
+  }
+  .info_services .service_item:nth-last-child(1){
     text-align: right;
-  }
-  .info_services .service_item:nth-last-child(-n+2){
-    text-align: center;
   }
   .info_services .service_item img{
     width:14px;
