@@ -137,6 +137,9 @@
       btnClick(){
         console.log("btnClick");
       }
+    },
+    destroyed(){
+      this.bs.destroy();
     }
   }
 </script>

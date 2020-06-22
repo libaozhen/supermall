@@ -41,6 +41,9 @@
         this.$emit('pullingUp')
       });
     },
+    destroyed(){
+      this.bscroll && this.bscroll.destroy();
+    },
     methods:{
       // 滚动方法
       scrollTo(x,y,time=300){
@@ -51,6 +54,7 @@
         this.bscroll && this.bscroll.finishPullUp();
       },
       refresh(){
+         console.log('=====');
         this.bscroll && this.bscroll.refresh();
       }
     }

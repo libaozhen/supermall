@@ -76,12 +76,29 @@
       this.getHomeGoods('sell');
     },
     mounted(){
+      //
+      const refresh = this.debounce(this.$refs.scroll.refresh,100);
+
       // 监听GoodsList组件发出的事件总线,
       this.$bus.$on('imageLoad',()=>{
-        this.$refs.scroll && this.$refs.scroll.refresh();
+        refresh();
       });
     },
     methods:{
+      // 防抖函数
+      debounce(func, wait) {
+        let timer;
+        return function() {
+          let context = this; // 注意 this 指向
+          let args = arguments; // arguments中存着e
+
+          if (timer) clearTimeout(timer);
+
+          timer = setTimeout(() => {
+            func.apply(this, args)
+          }, wait);
+        }
+      },
       /**
        * 事件相关方法
        * */
@@ -121,7 +138,7 @@
         this.$refs.scroll.bscroll.refresh();
         setTimeout(()=>{
           // 结束本次上拉刷新
-          this.$refs.scroll.finishPullUp();
+          this.$refs.scroll && this.$refs.scroll.finishPullUp();
         },2000);
       },
       // GoodsList组件中每张图片加载完毕后的回调函数
