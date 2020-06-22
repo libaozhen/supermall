@@ -1,6 +1,6 @@
 <template>
   <div class="goods_box">
-    <div class="goods_item" v-for="(item,index) in goods" :key="index">
+    <div class="goods_item" v-for="(item,index) in goods" :key="index" @click="goToDetail(item.iid)">
        <img :src="item.show.img" alt="" @load="imageLoad">
        <div class="goods_info">
           <p>{{item.title}}</p>
@@ -27,6 +27,16 @@
         // this.$emit('imageLoad');
         // 如果是多个子组件，不能直接发送事件到home，则可以利用事件总线方式传递
         this.$bus.$emit('imageLoad');
+      },
+      // 跳转到详情页
+      goToDetail(iid){
+        console.log(iid);
+        this.$router.push({
+          path:'/detail',
+          query:{
+            iid
+          }
+        });
       }
     }
   }
