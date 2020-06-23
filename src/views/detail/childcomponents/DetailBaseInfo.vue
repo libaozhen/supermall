@@ -37,6 +37,7 @@
 <style scoped>
   .goods_info{
     padding:10px;
+    border-bottom: 3px solid #eee;
   }
   .goods_title{
     font-size: 18px;
@@ -84,7 +85,6 @@
     display: flex;
     height: 80px;
     line-height: 80px;
-    border-bottom: 3px solid #eee;
   }
   .info_services .service_item{
     flex: 1;

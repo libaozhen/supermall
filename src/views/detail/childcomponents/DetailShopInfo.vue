@@ -1,5 +1,5 @@
 <template>
-  <div class="shopInfo">
+  <div class="shopInfo" v-if="Object.keys(shop).length>0">
     <div class="shop_head">
       <img :src="shop.log" alt="">
       <span>{{shop.name}}</span>
@@ -7,48 +7,25 @@
     <div class="shop_other">
       <div class="shop_other_left">
         <div class="left_sells">
-          {{shop.sells|showSells}}
+          <div class="sell_num">{{shop.sells|showSells}}</div>
+           <div class="sell_title">总销量</div>
         </div>
         <div class="left_all">
-          {{shop.goodsCount}}
+          <div class="all_num">{{shop.goodsCount}}</div>
+          <div class="all_title">全部宝贝</div>
         </div>
       </div>
       <div class="shop_other_right">
-
+        <div v-for="(item,index) in shop.score" class="right_item">
+          <div class="right_item_title">{{item.name}}</div>
+          <div class="right_item_score" :class="item.isBetter?'high_color':'low_color' ">{{item.score}}</div>
+          <div class="right_item_level" :class="item.isBetter?'high_bg':'low_bg' ">{{item.isBetter|showLevel}}</div>
+        </div>
       </div>
     </div>
-    <ul>
-      <li>列表1</li>
-      <li>列表2</li>
-      <li>列表3</li>
-      <li>列表4</li>
-      <li>列表5</li>
-      <li>列表6</li>
-      <li>列表7</li>
-      <li>列表8</li>
-      <li>列表9</li>
-      <li>列表10</li>
-      <li>列表11</li>
-      <li>列表12</li>
-      <li>列表13</li>
-      <li>列表14</li>
-      <li>列表15</li>
-      <li>列表16</li>
-      <li>列表17</li>
-      <li>列表18</li>
-      <li>列表19</li>
-      <li>列表20</li>
-      <li>列表21</li>
-      <li>列表22</li>
-      <li>列表23</li>
-      <li>列表24</li>
-      <li>列表25</li>
-      <li>列表26</li>
-      <li>列表27</li>
-      <li>列表28</li>
-      <li>列表29</li>
-      <li>列表30</li>
-    </ul>
+    <div class="inShop_box">
+      <span class="inShop">进店逛逛</span>
+    </div>
   </div>
 </template>
 
@@ -66,6 +43,13 @@
     filters:{
       showSells(value){
         return value + "万";
+      },
+      showLevel(value){
+        let level = "低";
+        if(value){
+          level = "高";
+        }
+        return level
       }
     }
   }
@@ -74,6 +58,7 @@
 <style scoped>
   .shopInfo{
     padding:0 10px;
+    border-bottom: 3px solid #eee;
   }
   .shop_head{
     vertical-align: center;
@@ -88,7 +73,6 @@
     margin-right:10px;
   }
   .shop_other{
-    border:1px solid red;
     height: 80px;
     display: flex;
   }
@@ -96,20 +80,86 @@
     flex:1;
     display: flex;
     align-items: center;
-    border: 1px solid red;
+
   }
   .shop_other .shop_other_left .left_sells{
     flex:1;
     text-align: center;
-    border: 1px solid green;
   }
+  .shop_other .shop_other_left .left_sells .sell_num{
+    font-size: 18px;
+  }
+  .shop_other .shop_other_left .left_sells .sell_title{
+    font-size: 16px;
+    margin-top:5px;
+  }
+
   .shop_other .shop_other_left .left_all{
     flex:1;
     text-align: center;
-    border: 1px solid green;
+    border-right: 1px solid #ccc;
+  }
+  .shop_other .shop_other_left .left_all .all_num{
+    font-size: 18px;
+  }
+  .shop_other .shop_other_left .left_all .all_title{
+    font-size: 16px;
+    margin-top:5px;
   }
   .shop_other .shop_other_right{
     flex:1;
-    border: 1px solid red;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .shop_other .shop_other_right .right_item{
+    margin-top:10px;
+    display: flex;
+  }
+  .shop_other .shop_other_right .right_item .right_item_title{
+    flex:1;
+  }
+  .shop_other .shop_other_right .right_item .right_item_score{
+    width:60px;
+    padding-left:6px;
+  }
+  .shop_other .shop_other_right .right_item .right_item_level{
+    width:20px;
+  }
+  .low_color{
+    color:#008000;
+  }
+  .high_color{
+    color:var(--color-high-text);
+  }
+
+  .low_bg{
+    background-color: #008000;
+    text-align: center;
+    color:#fff;
+  }
+  .high_bg{
+    background-color: var(--color-high-text);
+    text-align: center;
+    color:#fff;
+  }
+
+  .inShop_box{
+    height: 80px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .inShop_box .inShop{
+    width:180px;
+    height:30px;
+    border-radius: 5px;
+    line-height: 30px;
+    background-color: #f2f4fb;
+    text-align: center;
+    vertical-align: middle;
   }
 </style>

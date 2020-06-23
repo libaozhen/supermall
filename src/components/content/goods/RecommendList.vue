@@ -1,7 +1,7 @@
 <template>
   <div class="goods_box">
-    <div class="goods_item" v-for="(item,index) in goods" :key="index" @click="goToDetail(item.iid)">
-       <img :src="item.show.img" alt="" @load="imageLoad">
+    <div class="goods_item" v-for="(item,index) in goods" :key="index" @click="goToDetail(item.item_id)">
+       <img :src="item.image" alt="" @load="imageLoad">
        <div class="goods_info">
           <p>{{item.title}}</p>
           <span class="price">￥{{item.price}}</span><span class="collect">{{item.cfav}}</span>
@@ -12,7 +12,7 @@
 
 <script>
   export default {
-    name:"GoodsList",
+    name:"RecommendList",
     props:{
       'goods':{
         type:Array,
@@ -22,7 +22,7 @@
       }
     },
     computed:{
-  
+
     },
     methods:{
       imageLoad(){

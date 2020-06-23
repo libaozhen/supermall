@@ -36,9 +36,11 @@
   import {getSwiperData,getHomeGoods} from 'network/home.js';
   // 导入工具js文件
   import {debounce} from 'common/utils.js'
+  import {imageLoadMixin} from 'common/mixin.js'
 
   export default {
     name:"Home",
+    mixins:[imageLoadMixin],
     data(){
       return {
         goodsType:'pop',
@@ -80,23 +82,16 @@
       // 获取精选商品
       this.getHomeGoods('sell');
     },
-    mounted(){
-
-      //防抖函数
-      const refresh = debounce(this.$refs.scroll.refresh,100,false);
-      // 监听GoodsList组件发出的事件总线,
-      this.$bus.$on('imageLoad',()=>{
-        refresh();
-      });
-    },
     activated(){
       // console.log("activated");
       this.$refs.scroll.scrollTo(0,this.saveY,0);
       this.$refs.scroll.refresh();
     },
     deactivated(){
+      // 保存scroll的y值
       this.saveY = this.$refs.scroll.getScrollY();
-      console.log( this.saveY);
+      // 清除全局总线事件,在混入文件中定义，mixin.js文件中
+      this.$bus.$off('imageLoad',this.imageLoadFuc);
     },
     destroyed(){
       console.log('Home组件销毁');
