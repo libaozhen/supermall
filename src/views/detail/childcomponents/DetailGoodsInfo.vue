@@ -34,14 +34,16 @@
         this.imageCounter++;
         // 加载完最后一张后发射事件，刷新Better-Scroll组件
         if(this.imageCounter===this.imageLength){
-          this.$emit('imageLoad');
+          this.$emit('detailImageLoad');
         }
       }
     },
     watch:{
       detailInfo(){
         for(let item of this.detailInfo.detailImage){
-          this.imageLength += item.list.length;
+          if( item.list){
+            this.imageLength += item.list.length;
+          }
         }
       }
     }

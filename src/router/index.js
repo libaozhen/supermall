@@ -19,6 +19,7 @@ const routes = [
     redirect:"/home"
   },
   {
+    name:"home",
     path:"/home",
     component:Home,
     meta:{
@@ -26,6 +27,7 @@ const routes = [
     }
   },
   {
+    name:"category",
     path:"/category",
     component:Category,
     meta:{
@@ -33,6 +35,7 @@ const routes = [
     }
   },
   {
+    name:"cart",
     path:"/cart",
     component:Cart,
     meta:{
@@ -40,6 +43,7 @@ const routes = [
     }
   },
   {
+    name:"profile",
     path:"/profile",
     component:Profile,
     meta:{
@@ -47,6 +51,7 @@ const routes = [
     }
   },
   {
+    name:"detail",
     path:"/detail",
     component:Detail,
     meta:{

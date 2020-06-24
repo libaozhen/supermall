@@ -1,24 +1,35 @@
 <template>
   <div id="detail" class="detail">
-    <DetailNavBar></DetailNavBar>
-    <Scroll ref="scroll" class="scroll" :probe-type="3" :pull-up-load="true">
-      <DetailSwiper :topImages="topImages"></DetailSwiper>
+    <DetailNavBar ref="detalNavBar" @titleClick="titleClick"></DetailNavBar>
+    <Scroll ref="scroll" class="scroll" :probe-type="3" :pull-up-load="true" @scroll="scroll">
+      <DetailSwiper :topImages="topImages" @detailImageLoad="detailImageLoad"></DetailSwiper>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
-      <DetailGoodsInfo :detailInfo="detailInfo" @imageLoad="imageLoad"></DetailGoodsInfo>
-      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
-      <DetailCommentInfo :commentInfo="commentInfo"></DetailCommentInfo>
-      <RecommendList :goods="recommend"></RecommendList>
+      <DetailGoodsInfo :detailInfo="detailInfo" @detailImageLoad="detailImageLoad"></DetailGoodsInfo>
+      <DetailParamInfo ref="paramInfo" :paramInfo="paramInfo" @detailImageLoad="detailImageLoad"></DetailParamInfo>
+      <DetailCommentInfo ref="commentInfo" :commentInfo="commentInfo"></DetailCommentInfo>
+      <RecommendList ref="recomment" :goods="recommend" @detailImageLoad="detailImageLoad"></RecommendList>
     </Scroll>
+    <!-- 回到顶部 -->
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
+    <detail-bottom-bar @addIntoCart="addIntoCart"></detail-bottom-bar>
   </div>
 </template>
 
 <script>
+  /**
+   * 公共组件
+   *
+   */
   // 滚动组件
   import Scroll from 'components/common/scroll/Scroll.vue'
-
+  // 导入推荐组件
   import RecommendList from 'components/content/goods/RecommendList.vue'
-
+  /**
+   * 子组件
+   *
+   */
+  // 导入子组件
   import DetailNavBar from './childcomponents/DetailNavBar.vue';
   import DetailSwiper from './childcomponents/DetailSwiper.vue';
   import DetailBaseInfo from './childcomponents/DetailBaseInfo.vue';
@@ -26,13 +37,19 @@
   import DetailGoodsInfo from './childcomponents/DetailGoodsInfo.vue';
   import DetailParamInfo from './childcomponents/DetailParamInfo.vue';
   import DetailCommentInfo from './childcomponents/DetailCommentInfo.vue';
-
+  import DetailBottomBar from './childcomponents/DetailBottomBar.vue';
+  /**
+   * 方法
+   *
+   */
   import {getDetail,getRecommend,Goods,Shop,GoodsParam} from 'network/detail.js';
-  import {imageLoadMixin} from 'common/mixin.js';
+  import {debounce} from 'common/utils.js';
+  // 导入混入
+  import {imageLoadMixin,backTopMixin} from 'common/mixin.js';
 
   export default {
     name:"Detail",
-    mixins:[imageLoadMixin],
+    mixins:[imageLoadMixin,backTopMixin],
     data(){
       return {
         iid:null,
@@ -43,7 +60,10 @@
         detailInfo:{},
         paramInfo:{},
         commentInfo:{},
-        recommend:[]
+        recommend:[],
+        titleTopYs:[0,600,800,1200],
+        // 获取topY的方法
+        getTopYs:null
       }
     },
     components:{
@@ -55,7 +75,8 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
-      RecommendList
+      RecommendList,
+      DetailBottomBar
     },
     created(){
       // 获取保存iid
@@ -64,18 +85,66 @@
       this.getDetail();
       // 获取推荐数据
       this.getRecommend();
-    },
-    destroyed(){
-      // 清除全局总线事件,在混入文件中定义，mixin.js文件中
-      this.$bus.$off('imageLoad',this.imageLoadFuc);
+
+      // 对获取titleTopYs值做一个防抖
+      this.getTopYs = debounce(()=>{
+        this.titleTopYs=[];
+        // 商品offsetTop
+        this.titleTopYs.push(0);
+        // 参数offsetTop
+        this.titleTopYs.push(this.$refs.paramInfo.$el.offsetTop);
+        // 评论offsetTop
+        this.titleTopYs.push(this.$refs.commentInfo.$el.offsetTop);
+        //推荐offsetTop
+        this.titleTopYs.push(this.$refs.recomment.$el.offsetTop);
+      },300,false);
     },
     methods:{
       /**
-       * DetailGoodsInfo组件图片加载完毕事件
+       * 事件
        * */
-      imageLoad(){
-        this.$refs.scroll.refresh();
+       // scroll滚动事件
+       scroll(position){
+          let y = -position.y;
+          if(y<this.titleTopYs[1]){
+             this.$refs.detalNavBar.currentIndex = 0;
+          }else if(y<this.titleTopYs[2]){
+             this.$refs.detalNavBar.currentIndex = 1;
+          }else if(y<this.titleTopYs[3]){
+             this.$refs.detalNavBar.currentIndex = 2;
+          }else{
+            this.$refs.detalNavBar.currentIndex = 3;
+          }
+
+          // 判断返回顶部是否显示
+          this.isShowBackTop = -position.y>1000;
+       },
+       // 详情页面所有子组件图片加载完毕回调事件
+       detailImageLoad(){
+          this.refresh();
+          this.getTopYs();
+       },
+      // 标题头部点击事件
+      titleClick(index){
+        // console.log(index);
+        this.$refs.scroll.scrollTo(0,-this.titleTopYs[index],300);
       },
+      // 添加到购物车点击事件
+      addIntoCart(){
+        // 获取购物车需要展示的信息
+        const goods = {};
+        goods.image = this.topImages[0];
+        goods.title = this.goods.title;
+        goods.desc = this.goods.desc;
+        goods.price = this.goods.realPrice;
+        goods.iid = this.iid;
+        goods.count = 1;
+        // 调用vuex中action的方法
+        this.$store.dispatch('addCart',goods);
+      },
+      /**
+       *方法
+       * */
       // 获取详细信息
       getDetail(){
         getDetail(this.iid).then(res=>{
@@ -100,26 +169,26 @@
       // 获取推荐信息
       getRecommend(){
         getRecommend().then(res=>{
+          // console.log(res);
           this.recommend = res.data.list
         });
       }
     },
     watch:{
-      $route: {
-            handler (){
-              const {iid} = this.$route.query;
-              console.log(iid);
-              // 更新数据
-              // 获取保存iid
-              this.iid = iid;
-              // 获取详情数据
-              // this.getDetail();
-              // 获取推荐数据
-              // this.getRecommend();
-            },
-
-            immediate: true
-          }
+      $route(to,from){
+        const {iid} = this.$route.query;
+         console.log('================================'+iid);
+         // 更新数据
+         // 获取保存iid
+         this.iid = iid;
+         this.iid = '1m1d2os';
+         // 获取详情数据
+         this.getDetail();
+         // 获取推荐数据
+         this.getRecommend();
+         // 滚动到顶部
+         this.$refs.scroll.scrollTo(0,0,0);
+      }
     }
   }
 </script>
@@ -134,7 +203,7 @@
   .scroll{
     position: absolute;
     top:44px;
-    bottom:0;
+    bottom:49px;
     left:0;
     right: 0;
     overflow: hidden;

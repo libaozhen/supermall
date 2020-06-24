@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper11">
     <ul class="content">
+      {{$store.state.message}}
       <button @click="btnClick">按钮</button>
       <li>列表1</li>
       <li>列表2</li>

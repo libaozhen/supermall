@@ -1,7 +1,7 @@
 <template>
   <swiper class="swiper" :options="swiperOption">
-    <swiper-slide v-for="(item,index) in topImages">
-      <img :src="item"/>
+    <swiper-slide v-for="(item,index) in topImages" :key="index">
+      <img :src="item" @load="imageLoad"/>
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>
@@ -39,6 +39,11 @@
     components:{
       Swiper,
       SwiperSlide
+    },
+    methods:{
+      imageLoad(){
+        this.$emit('detailImageLoad');
+      }
     }
   }
 </script>

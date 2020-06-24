@@ -29,7 +29,7 @@
         // 方式一
         // this.$emit('imageLoad');
         // 如果是多个子组件，不能直接发送事件到home，则可以利用事件总线方式传递
-        this.$bus.$emit('imageLoad');
+        this.$emit('detailImageLoad');
       },
       // 跳转到详情页
       goToDetail(iid){

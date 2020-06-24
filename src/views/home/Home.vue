@@ -36,11 +36,11 @@
   import {getSwiperData,getHomeGoods} from 'network/home.js';
   // 导入工具js文件
   import {debounce} from 'common/utils.js'
-  import {imageLoadMixin} from 'common/mixin.js'
+  import {imageLoadMixin,backTopMixin} from 'common/mixin.js'
 
   export default {
     name:"Home",
-    mixins:[imageLoadMixin],
+    mixins:[imageLoadMixin,backTopMixin],
     data(){
       return {
         goodsType:'pop',
@@ -51,7 +51,6 @@
           'new':{page:0,list:[]},
           'sell':{page:0,list:[]}
         },
-        isShowBackTop:false,
         isTabControlShow:false,
         // tabcontrol 的offsettop属性值
         tabOffSetTop:0,
@@ -68,7 +67,6 @@
       Scroll,
       TabControl,
       GoodsList,
-      BackTop,
       HomeSwiper,
       RecommendView
     },
@@ -132,11 +130,6 @@
         this.$refs.tabcontrol_content.current_index = index;
         // 如果有吸顶效果后，点击页签，则显示从开始的第一张显示
         this.$refs.scroll.scrollTo(0,-this.tabOffSetTop,0);
-      },
-      // 返回顶部点击事件
-      backTopClick(){
-        // 调用滚动组件的scrollTo方法
-        this.$refs.scroll.scrollTo(0,0,500);
       },
       // Scroll组件滚动事件
       handleScroll(position){

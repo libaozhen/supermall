@@ -17,7 +17,7 @@
       </tr>
     </table>
     <div class="param_image" v-if="paramInfo.image!=''">
-      <img :src="paramInfo.image" alt="">
+      <img :src="paramInfo.image" alt="" @load="imageLoad">
     </div>
   </div>
 </template>
@@ -31,6 +31,12 @@
         default(){
           return {}
         }
+      }
+    },
+    methods:{
+      imageLoad(){
+        // 如果是多个子组件，不能直接发送事件到home，则可以利用事件总线方式传递
+        this.$emit('detailImageLoad');
       }
     }
   }

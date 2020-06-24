@@ -33,9 +33,12 @@
     methods:{
       itemClick(index){
         this.currentIndex = index;
+        this.$emit('titleClick',index);
       },
       goBack(){
-        this.$router.back();
+        this.$router.push({
+          path:'/home'
+        });
       }
     }
   }
