@@ -16,7 +16,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path:"/",
-    redirect:"/home"
+    redirect:"/home",
   },
   {
     name:"home",
@@ -60,6 +60,7 @@ const routes = [
   }
 ];
 const router = new VueRouter({
+  // base: '/supermall/',
   routes,
   mode:'history'
 });

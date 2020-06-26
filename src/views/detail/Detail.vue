@@ -47,6 +47,9 @@
   // 导入混入
   import {imageLoadMixin,backTopMixin} from 'common/mixin.js';
 
+  // 导入vuex的映射
+  import {mapActions} from 'vuex';
+
   export default {
     name:"Detail",
     mixins:[imageLoadMixin,backTopMixin],
@@ -100,6 +103,8 @@
       },300,false);
     },
     methods:{
+      // 展开映射
+      ...mapActions(['addCart']),
       /**
        * 事件
        * */
@@ -138,9 +143,20 @@
         goods.desc = this.goods.desc;
         goods.price = this.goods.realPrice;
         goods.iid = this.iid;
+        // 数量
         goods.count = 1;
+        // 购物车中是否被选中
+        goods.checked = false;
+
         // 调用vuex中action的方法
-        this.$store.dispatch('addCart',goods);
+        // this.$store.dispatch('addCart',goods).then(res=>{
+        //   console.log(res);
+        // });
+        // 直接调用映射的action方法
+        this.addCart(goods).then(res=>{
+          console.log(res);
+          this.$toast.show('加入购物车成功',2000);
+        });
       },
       /**
        *方法
@@ -148,7 +164,7 @@
       // 获取详细信息
       getDetail(){
         getDetail(this.iid).then(res=>{
-          console.log(res.result);
+          // console.log(res.result);
           const data = res.result;
           // 顶部图片的轮播数据
           this.topImages = data.itemInfo.topImages;

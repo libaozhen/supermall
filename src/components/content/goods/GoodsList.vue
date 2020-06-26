@@ -1,7 +1,8 @@
 <template>
   <div class="goods_box">
     <div class="goods_item" v-for="(item,index) in goods" :key="index" @click="goToDetail(item.iid)">
-       <img :src="item.show.img" alt="" @load="imageLoad">
+       <!-- <img :src="item.show.img" alt="" @load="imageLoad"> -->
+       <img v-lazy="item.show.img" alt="" @load="imageLoad">
        <div class="goods_info">
           <p>{{item.title}}</p>
           <span class="price">￥{{item.price}}</span><span class="collect">{{item.cfav}}</span>
@@ -22,7 +23,7 @@
       }
     },
     computed:{
-  
+
     },
     methods:{
       imageLoad(){
